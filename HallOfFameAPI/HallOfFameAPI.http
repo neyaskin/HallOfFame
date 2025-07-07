@@ -1,6 +1,0 @@
-@HallOfFameAPI_HostAddress = http://localhost:5289
-
-GET {{HallOfFameAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
