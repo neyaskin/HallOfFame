@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using HallOfFameAPI.Services;
 using HallOfFameAPI.Data.Repositories;
 using HallOfFameAPI.Data.Entities;
