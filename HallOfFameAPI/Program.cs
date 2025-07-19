@@ -4,6 +4,7 @@ using HallOfFameAPI.Data.Repositories;
 using HallOfFameAPI.Exceptions;
 using HallOfFameAPI.Services;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,8 @@ builder.Services.AddControllers();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-builder.Logging.AddFile(builder.Configuration.GetSection("Logging:File"));
+// builder.Logging.AddFile(builder.Configuration.GetSection("Logging:File"));
+builder.Logging.AddFile("Logs/log.txt", minimumLevel: LogLevel.Information);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
