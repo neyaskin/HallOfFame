@@ -2,8 +2,17 @@
 
 namespace HallOfFameAPI.Validators;
 
+/// <summary>
+/// Валидатор для проверки объектов Person (создания и обновления)
+/// Проверяет корректность данных перед сохранением в систему
+/// </summary>
 public class PersonValidator : IPersonValidator
 {
+    /// <summary>
+    /// Валидация DTO для создания Person
+    /// </summary>
+    /// <param name="personDto">Объект с данными для создания Person <seealso cref="PersonCreateDto"/></param>
+    /// <returns>Результат валидации (успех/ошибка с сообщением)</returns>
     public ValidationResult Validate(PersonCreateDto personDto)
     {
         if (personDto == null)
@@ -12,6 +21,11 @@ public class PersonValidator : IPersonValidator
         return ValidateCommon(personDto.Name, personDto.DisplayName, personDto.Skills);
     }
 
+    /// <summary>
+    /// Валидация DTO для обновления Person
+    /// </summary>
+    /// <param name="personDto">Объект с данными для обновления Person <seealso cref="PersonUpdateDto"/></param>
+    /// <returns>Результат валидации (успех/ошибка с сообщением)</returns>
     public ValidationResult Validate(PersonUpdateDto personDto)
     {
         if (personDto == null)
@@ -20,6 +34,13 @@ public class PersonValidator : IPersonValidator
         return ValidateCommon(personDto.Name, personDto.DisplayName, personDto.Skills);
     }
 
+    /// <summary>
+    /// Общий метод валидации основных полей Person и связанных навыков
+    /// </summary>
+    /// <param name="name">Имя Person</param>
+    /// <param name="displayName">Отображаемое имя Person</param>
+    /// <param name="skills">Список навыков Person</param>
+    /// <returns>Результат валидации</returns>
     private ValidationResult ValidateCommon(string name, string displayName, IEnumerable<SkillDto> skills)
     {
         if (string.IsNullOrEmpty(name))
