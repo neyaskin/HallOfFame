@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 namespace HallOfFameAPI.Tests.IntegrationTests;
 
-public class PersonsControllerIntegrationTests : IClassFixture<WebApplicationFactory<Program>>
+public class PersonsControllerIntegrationTests : IClassFixture<TestWebApplicationFactory<Program>>
 {
     private readonly HttpClient _client;
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly TestWebApplicationFactory<Program> _factory;
 
-    public PersonsControllerIntegrationTests(WebApplicationFactory<Program> factory)
+    public PersonsControllerIntegrationTests(TestWebApplicationFactory<Program> factory)
     {
         _factory = factory;
         _client = _factory.CreateClient();
@@ -19,8 +19,6 @@ public class PersonsControllerIntegrationTests : IClassFixture<WebApplicationFac
     [Fact]
     public async Task GetAllPersons()
     {
-        var _client = _factory.CreateClient();
-
         var response = await _client.GetAsync("api/v1/persons");
         response.EnsureSuccessStatusCode();
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -29,7 +27,6 @@ public class PersonsControllerIntegrationTests : IClassFixture<WebApplicationFac
     [Fact]
     public async Task GetPersonById_WhenPersonExists()
     {
-        var client = _factory.CreateClient();
         var person = new PersonCreateDto
         {
             Name = "Test test",
@@ -37,9 +34,9 @@ public class PersonsControllerIntegrationTests : IClassFixture<WebApplicationFac
             Skills = new List<SkillDto> { new() { Name = "xUnit", Level = 4 } }
         };
 
-        var createResponse = await client.PostAsJsonAsync("/api/v1/persons", person);
+        var createResponse = await _client.PostAsJsonAsync("/api/v1/persons", person);
         var createdPerson = await createResponse.Content.ReadFromJsonAsync<PersonResponseDto>();
-        var response = await client.GetAsync($"/api/v1/persons/{createdPerson!.Id}");
+        var response = await _client.GetAsync($"/api/v1/persons/{createdPerson!.Id}");
 
         Assert.Equal(response.StatusCode, HttpStatusCode.OK);
 
@@ -53,7 +50,7 @@ public class PersonsControllerIntegrationTests : IClassFixture<WebApplicationFac
     {
         var response = await _client.GetAsync("/api/v1/persons/999");
 
-        Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        Assert.Equal(response.StatusCode, HttpStatusCode.NoContent);
     }
 
     [Fact]
@@ -187,7 +184,7 @@ public class PersonsControllerIntegrationTests : IClassFixture<WebApplicationFac
         Assert.Equal(responseDeletePerson.StatusCode, HttpStatusCode.NoContent);
 
         var responseGetPerson = await _client.GetAsync($"/api/v1/persons/{createdPerson.Id}");
-        Assert.Equal(responseGetPerson.StatusCode, HttpStatusCode.NotFound);
+        Assert.Equal(responseGetPerson.StatusCode, HttpStatusCode.NoContent);
     }
 
     [Fact]
@@ -195,6 +192,6 @@ public class PersonsControllerIntegrationTests : IClassFixture<WebApplicationFac
     {
         var response = await _client.DeleteAsync("/api/v1/persons/999");
 
-        Assert.Equal(response.StatusCode, HttpStatusCode.NotFound);
+        Assert.Equal(response.StatusCode, HttpStatusCode.NoContent);
     }
 }

@@ -2,6 +2,7 @@
 using HallOfFameAPI.Data.Entities;
 using HallOfFameAPI.Data.Repositories;
 using HallOfFameAPI.DTOs;
+using HallOfFameAPI.Exceptions;
 using HallOfFameAPI.Validators;
 
 namespace HallOfFameAPI.Services;
@@ -30,6 +31,7 @@ public class PersonService : IPersonService
     public async Task<PersonResponseDto> GetPersonByIdAsync(long id)
     {
         var person = await _personRepository.GetPersonByIdAsync(id);
+        
         return _mapper.Map<PersonResponseDto>(person);
     }
 
@@ -38,7 +40,7 @@ public class PersonService : IPersonService
     {
         var validationResult = _validator.Validate(personDto);
         if (!validationResult.IsValid)
-            return ServiceResult<PersonResponseDto>.Failure(validationResult.ErrorMessage);
+            throw new ValidationException(validationResult.ErrorMessage);
 
         var person = _mapper.Map<Person>(personDto);
         await _personRepository.AddPersonAsync(person);
@@ -50,11 +52,11 @@ public class PersonService : IPersonService
     {
         var validationResult = _validator.Validate(personDto);
         if (!validationResult.IsValid)
-            return ServiceResult<PersonResponseDto>.Failure(validationResult.ErrorMessage);
+            throw new ValidationException(validationResult.ErrorMessage);
 
         var existingPerson = await _personRepository.GetPersonByIdAsync(id);
         if (existingPerson == null)
-            return ServiceResult<PersonResponseDto>.Failure("Person not found");
+            throw new NotFoundException("Person not found");
 
         var person = _mapper.Map<Person>(personDto);
 

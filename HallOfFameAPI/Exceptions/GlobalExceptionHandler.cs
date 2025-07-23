@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net;
+using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,19 +19,28 @@ public class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "Unhandled exception");
+        _logger.LogError(exception.Message, "Unhandled exception");
 
-        var problemsDetails = new ProblemDetails
+        var problem = new ProblemDetails();
+        switch (exception)
         {
-            Status = StatusCodes.Status500InternalServerError,
-            Title = "Server Error",
-            Detail = exception.Message
-        };
+            case NotFoundException:
+                problem.Status = (int)HttpStatusCode.NotFound;
+                problem.Detail = exception.Message;
+                problem.Title = HttpStatusCode.NotFound.ToString();
+                break;
+            case ValidationException:
+                problem.Status = (int)HttpStatusCode.BadRequest;
+                problem.Detail = exception.Message;
+                problem.Title = HttpStatusCode.BadRequest.ToString();
+                break;
+        }
 
-        httpContext.Response.StatusCode = problemsDetails.Status.Value;
+
+        httpContext.Response.StatusCode = problem!.Status!.Value;
         httpContext.Response.ContentType = "application/problem+json";
 
-        await httpContext.Response.WriteAsJsonAsync(JsonSerializer.Serialize(problemsDetails), cancellationToken);
+        await httpContext.Response.WriteAsJsonAsync(problem, cancellationToken);
 
         return true;
     }

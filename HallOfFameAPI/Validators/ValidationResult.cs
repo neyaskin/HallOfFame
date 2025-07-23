@@ -1,17 +1,17 @@
 ﻿namespace HallOfFameAPI.Validators;
 
 /// <summary>
-/// Класс для результата валидации, содержащий статус и сообщение об ошибке
+///     Класс для результата валидации, содержащий статус и сообщение об ошибке.
 /// </summary>
 public class ValidationResult
 {
     /// <summary>
-    /// Статус валидации
+    ///     Статус валидации.
     /// </summary>
     public bool IsValid { get; }
     
     /// <summary>
-    /// Сообщение об ошибке
+    ///     Сообщение об ошибке.
     /// </summary>
     public string ErrorMessage { get; }
     
@@ -22,7 +22,7 @@ public class ValidationResult
     }
 
     /// <summary>
-    /// Успешный результат валидации
+    ///     Успешный результат валидации.
     /// </summary>
     public static ValidationResult Success()
     {
@@ -30,7 +30,7 @@ public class ValidationResult
     }
 
     /// <summary>
-    /// Неуспешный результат с сообщением об ошибке
+    ///     Неуспешный результат с сообщением об ошибке.
     /// </summary>
     /// <param name="errorMessage">Описание ошибки</param>
     public static ValidationResult Failure(string errorMessage)

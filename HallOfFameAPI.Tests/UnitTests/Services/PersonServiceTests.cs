@@ -2,6 +2,7 @@
 using HallOfFameAPI.Data.Entities;
 using HallOfFameAPI.Data.Repositories;
 using HallOfFameAPI.DTOs;
+using HallOfFameAPI.Exceptions;
 using HallOfFameAPI.Services;
 using HallOfFameAPI.Validators;
 using Moq;
@@ -24,7 +25,6 @@ public class PersonServiceTests
     [Fact]
     public async Task CreatePersonAsync_Should_Return_CorrectResponse()
     {
-        // Arrange
         var createDto = new PersonCreateDto
         {
             Name = "Test",
@@ -92,7 +92,6 @@ public class PersonServiceTests
     [Fact]
     public async Task UpdatePersonAsync_WhenPersonExists_ReturnsUpdatedPerson()
     {
-        // Arrange
         var id = 1L;
         var existingPerson = new Person
         {
@@ -142,10 +141,8 @@ public class PersonServiceTests
         _mockMapper.Setup(m => m.Map<PersonResponseDto>(updatedPerson))
             .Returns(expectedResponse);
 
-        // Act
         var result = await _service.UpdatePersonAsync(id, updateDto);
 
-        // Assert
         Assert.NotNull(result);
         Assert.Equal(expectedResponse.Id, result.Data.Id);
         Assert.Equal(expectedResponse.Name, result.Data.Name);
@@ -162,18 +159,19 @@ public class PersonServiceTests
     [Fact]
     public async Task UpdatePersonAsync_WhenPersonNotExists_ReturnsNull()
     {
-        // Arrange
         var id = 999L;
-        var updateDto = new PersonUpdateDto();
+        var updateDto = new PersonUpdateDto()
+        {
+            Name = "Test test",
+            DisplayName = "TT",
+            Skills = new List<SkillDto> { new() { Name = "xUnit", Level = 4 } }
+        };
 
-        _mockRepo.Setup(r => r.GetPersonByIdAsync(id))
-            .ReturnsAsync((Person)null);
+        Assert.ThrowsAsync<NotFoundException>(async () =>
+        {
+            var result = await _service.UpdatePersonAsync(id, updateDto);
 
-        // Act
-        var result = await _service.UpdatePersonAsync(id, updateDto);
-
-        // Assert
-        Assert.False(result.IsSuccess);
+        });
     }
 
 

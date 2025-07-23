@@ -47,8 +47,8 @@ public class PersonsController : ControllerBase
     {
         var response = await _personService.GetPersonByIdAsync(id);
 
-        if (response == null) return NotFound();
         _logger.LogInformation("Get person by id. Success");
+
         return Ok(response);
     }
 
@@ -60,21 +60,10 @@ public class PersonsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PersonResponseDto>> AddPersonAsync([FromBody] PersonCreateDto? personDto)
     {
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Add person. Invalid model state");
-            return BadRequest(ModelState);
-        }
-
         var result = await _personService.AddPersonAsync(personDto);
 
-        if (!result.IsSuccess)
-        {
-            _logger.LogError($"Add person. {result.ErrorMessage}");
-            return BadRequest(result.ErrorMessage);
-        }
-
         _logger.LogInformation("Add person. Success");
+
         return CreatedAtAction(nameof(GetPersonById), new { id = result.Data.Id }, result.Data);
     }
 
@@ -87,21 +76,10 @@ public class PersonsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdatePersonAsync(long id, [FromBody] PersonUpdateDto personDto)
     {
-        if (!ModelState.IsValid)
-        {
-            _logger.LogError("Update Person. Invalid model state");
-            return BadRequest(ModelState);
-        }
-
-        var result = await _personService.UpdatePersonAsync(id, personDto);
-
-        if (!result.IsSuccess)
-        {
-            _logger.LogError($"Update person. {result.ErrorMessage}");
-            return result.ErrorMessage == "Person not found" ? NotFound() : BadRequest(result.ErrorMessage);
-        }
+        await _personService.UpdatePersonAsync(id, personDto);
 
         _logger.LogInformation("Update person. Success");
+
         return NoContent();
     }
 
@@ -112,16 +90,10 @@ public class PersonsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePersonAsync(long id)
     {
-        var deletedPerson = await _personService.GetPersonByIdAsync(id);
-
-        if (deletedPerson == null)
-        {
-            _logger.LogError("Delete Person. Person Dto is null");
-            return NotFound();
-        }
-
         await _personService.DeletePersonAsync(id);
+
         _logger.LogInformation("Delete person. Success");
+
         return NoContent();
     }
 }

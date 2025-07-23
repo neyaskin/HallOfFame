@@ -3,13 +3,13 @@
 namespace HallOfFameAPI.Validators;
 
 /// <summary>
-/// Валидатор для проверки объектов Person (создания и обновления)
-/// Проверяет корректность данных перед сохранением в систему
+///     Валидатор для проверки объектов Person (создания и обновления)
+///     Проверяет корректность данных перед сохранением в систему.
 /// </summary>
 public class PersonValidator : IPersonValidator
 {
     /// <summary>
-    /// Валидация DTO для создания Person
+    ///     Валидация DTO для создания Person.
     /// </summary>
     /// <param name="personDto">Объект с данными для создания Person <seealso cref="PersonCreateDto"/></param>
     /// <returns>Результат валидации (успех/ошибка с сообщением)</returns>
@@ -22,7 +22,7 @@ public class PersonValidator : IPersonValidator
     }
 
     /// <summary>
-    /// Валидация DTO для обновления Person
+    ///     Валидация DTO для обновления Person.
     /// </summary>
     /// <param name="personDto">Объект с данными для обновления Person <seealso cref="PersonUpdateDto"/></param>
     /// <returns>Результат валидации (успех/ошибка с сообщением)</returns>
@@ -35,7 +35,7 @@ public class PersonValidator : IPersonValidator
     }
 
     /// <summary>
-    /// Общий метод валидации основных полей Person и связанных навыков
+    ///     Общий метод валидации основных полей Person и связанных навыков.
     /// </summary>
     /// <param name="name">Имя Person</param>
     /// <param name="displayName">Отображаемое имя Person</param>
